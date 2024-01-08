@@ -16,7 +16,7 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            lowercase: true,
+            lowecase: true,
             trim: true,
         },
         fullName: {
@@ -46,7 +46,9 @@ const userSchema = new Schema(
             type: String,
         },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+    }
 );
 
 userSchema.pre("save", async function (next) {
@@ -66,15 +68,14 @@ userSchema.methods.generateAccessToken = function () {
             _id: this._id,
             email: this.email,
             username: this.username,
-            fullname: this.fullName,
+            fullName: this.fullName,
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: ACCESS_TOKEN_EXPIRY,
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
         }
     );
 };
-
 userSchema.methods.generateRefreshToken = function () {
     return jwt.sign(
         {
@@ -82,7 +83,7 @@ userSchema.methods.generateRefreshToken = function () {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: REFRESH_TOKEN_EXPIRY,
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
         }
     );
 };
